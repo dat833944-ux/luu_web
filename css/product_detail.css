@@ -1,0 +1,29 @@
+*
+{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.col-md-4 > img
+{
+    height: 300px;
+    width: 300px; 
+}
+
+.product-title--logo
+{
+    height: 30px;
+    width: 30px;
+}
+
+.product-order--icon > button
+{
+    border-radius: 1000px;
+}
+
+.btn:hover
+{
+    color: yellow;
+    background-color: green;
+}

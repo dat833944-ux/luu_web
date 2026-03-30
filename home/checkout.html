@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <style>
+        .checkout-container {
+            max-width: 900px;
+            margin: 50px auto;
+        }
+        
+        .cart-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+        
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: green;
+        }
+        
+        #bank-info {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            text-align: center;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+        
+        #bank-info img {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        #bank-info p {
+            margin: 5px 0;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container checkout-container">
+        <h2 class="mb-4">🛒 Thanh toán</h2>
+
+        <div class="card mb-4 p-3">
+            <h5>Thông tin khách hàng</h5>
+            <form id="checkout-form">
+                <div class="mb-3">
+                    <label>Tên:</label>
+                    <input type="text" class="form-control" id="customer-name" required>
+                </div>
+                <div class="mb-3">
+                    <label>Số điện thoại:</label>
+                    <input type="text" class="form-control" id="customer-phone" required>
+                </div>
+                <div class="mb-3">
+                    <label>Địa chỉ:</label>
+                    <input type="text" class="form-control" id="customer-address" required>
+                </div>
+                <div class="mb-3">
+                    <label>Email:</label>
+                    <input type="email" class="form-control" id="customer-email" required>
+                </div>
+            </form>
+        </div>
+
+        <div class="card mb-4 p-3">
+            <h5>Đơn hàng của bạn</h5>
+            <div id="cart-items"></div>
+            <div class="mt-3 text-end total-price">Tổng: 0đ</div>
+        </div>
+
+        <div class="card mb-4 p-3">
+            <h5>Phương thức thanh toán</h5>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment-method" id="cod" value="cod" checked>
+                <label class="form-check-label" for="cod">Thanh toán khi nhận hàng</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment-method" id="bank" value="bank">
+                <label class="form-check-label" for="bank">Chuyển khoản ngân hàng</label>
+            </div>
+
+            <div id="bank-info">
+                <img src="../img/qr/qrdemo.jpg" alt="QR Bank">
+                <p><strong>Ngân hàng:</strong> BIDV</p>
+                <p><strong>Chủ tài khoản:</strong> Nguyễn Văn Tèo</p>
+                <p><strong>Số tài khoản:</strong> 1251 0000 5863 28</p>
+            </div>
+        </div>
+
+        <button class="btn btn-success btn-lg w-100" id="place-order">Đặt hàng</button>
+    </div>
+
+    <script src="../js/cart.js"></script>
+    <script>
+        function renderCheckoutCart() {
+            const cart = getCart();
+            const container = document.getElementById("cart-items");
+            container.innerHTML = "";
+
+            let total = 0;
+            if (cart.length === 0) {
+                container.innerHTML = "<p>Giỏ hàng trống!</p>";
+                return;
+            }
+
+            cart.forEach(item => {
+                const row = document.createElement("div");
+                row.classList.add("d-flex", "align-items-center", "mb-2");
+                row.innerHTML = `
+            <img src="${item.image}" class="cart-img me-3">
+            <div class="flex-grow-1">
+                <h6>${item.name}</h6>
+                <p>${item.quantity} x ${item.price.toLocaleString('vi-VN')}đ = ${(item.quantity * item.price).toLocaleString('vi-VN')}đ</p>
+            </div>
+        `;
+                container.appendChild(row);
+                total += item.quantity * item.price;
+            });
+
+            document.querySelector(".total-price").innerText = `Tổng: ${total.toLocaleString('vi-VN')}đ`;
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCheckoutCart();
+
+            const bankRadio = document.getElementById("bank");
+            const codRadio = document.getElementById("cod");
+            const bankInfo = document.getElementById("bank-info");
+
+            bankRadio.addEventListener("change", () => {
+                if (bankRadio.checked) bankInfo.style.display = "block";
+            });
+            codRadio.addEventListener("change", () => {
+                if (codRadio.checked) bankInfo.style.display = "none";
+            });
+
+            document.getElementById("place-order").addEventListener("click", () => {
+                const name = document.getElementById("customer-name").value.trim();
+                const phone = document.getElementById("customer-phone").value.trim();
+                const address = document.getElementById("customer-address").value.trim();
+                const email = document.getElementById("customer-email").value.trim();
+
+                if (!name || !phone || !address || !email) {
+                    alert("Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
+
+                alert("Đặt hàng thành công! Cảm ơn bạn.");
+                localStorage.removeItem("cart");
+                window.location.href = "index.html";
+            });
+        });
+    </script>
+</body>
+
+</html>
